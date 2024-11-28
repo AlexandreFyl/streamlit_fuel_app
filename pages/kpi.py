@@ -150,6 +150,16 @@ def render_data(data):
             align-items: center;
             justify-content: center;
         }
+
+        .lowest {
+            border: 1px solid #ff6666!important;
+            border-left : 7px solid #ff6666!important;
+        }
+
+        .highest {
+            border: 1px solid #66ff66!important;
+            border-left : 7px solid #66ff66!important;
+        }
     </style>
 
     <div class="main-container">
@@ -166,18 +176,68 @@ def render_data(data):
         unsafe_allow_html=True,
     )
 
+    # Calculate min and max values for each fuel type
+    all_values = {
+        "Gazole": [],
+        "SP95": [],
+        "SP98": [],
+        "E10": [],
+        "E85": [],
+        "GPLc": [],
+    }
+
+    for element in data.values():
+        for fuel_type in all_values.keys():
+            all_values[fuel_type].append(float(element[fuel_type]))  # Convert to float
+
+    min_values = {fuel_type: min(values) for fuel_type, values in all_values.items()}
+    max_values = {fuel_type: max(values) for fuel_type, values in all_values.items()}
+
+    print("Min values:", min_values)  # Debugging output
+    print("Max values:", max_values)  # Debugging output
+
+    # Add tolerance for comparison
+    tolerance = 1e-9
+
     # Render the data from the filtered dataframe
     for element in data.items():
+        gasole_value = element[1]["Gazole"]
+        is_lowest_gazole = abs(gasole_value - min_values["Gazole"]) < tolerance
+        is_highest_gazole = abs(gasole_value - max_values["Gazole"]) < tolerance
+
+        print(is_lowest_gazole)  # Debugging output
+        print(is_highest_gazole)
+
+        sp95_value = element[1]["SP95"]
+        is_lowest_sp95 = abs(sp95_value - min_values["SP95"]) < tolerance
+        is_highest_sp95 = abs(sp95_value - max_values["SP95"]) < tolerance
+
+        sp98_value = element[1]["SP98"]
+        is_lowest_sp98 = abs(sp98_value - min_values["SP98"]) < tolerance
+        is_highest_sp98 = abs(sp98_value - max_values["SP98"]) < tolerance
+
+        e10_value = element[1]["E10"]
+        is_lowest_e10 = abs(e10_value - min_values["E10"]) < tolerance
+        is_highest_e10 = abs(e10_value - max_values["E10"]) < tolerance
+
+        e85_value = element[1]["E85"]
+        is_lowest_e85 = abs(e85_value - min_values["E85"]) < tolerance
+        is_highest_e85 = abs(e85_value - max_values["E85"]) < tolerance
+
+        gplc_value = element[1]["GPLc"]
+        is_lowest_gplc = abs(gplc_value - min_values["GPLc"]) < tolerance
+        is_highest_gplc = abs(gplc_value - max_values["GPLc"]) < tolerance
+
         st.write(
             f"""
             <div class="flex-row data-row">
                 <div class="enseigne">{element[0]}</div>
-                <div class="data-value">{element[1]["Gazole"]:.3f}</div>
-                <div class="data-value">{element[1]["SP95"]:.3f}</div>
-                <div class="data-value">{element[1]["SP98"]:.3f}</div>
-                <div class="data-value">{element[1]["E10"]:.3f}</div>
-                <div class="data-value">{element[1]["E85"]:.3f}</div>
-                <div class="data-value">{element[1]["GPLc"]:.3f}</div>
+                <div class="data-value {'lowest' if is_lowest_gazole else 'highest' if is_highest_gazole else ''}">{gasole_value:.3f}</div>
+                <div class="data-value {'lowest' if is_lowest_sp95 else 'highest' if is_highest_sp95 else ''}">{sp95_value:.3f}</div>
+                <div class="data-value {'lowest' if is_lowest_sp98 else 'highest' if is_highest_sp98 else ''}">{sp98_value:.3f}</div>
+                <div class="data-value {'lowest' if is_lowest_e10 else 'highest' if is_highest_e10 else ''}">{e10_value:.3f}</div>
+                <div class="data-value {'lowest' if is_lowest_e85 else 'highest' if is_highest_e85 else ''}">{e85_value:.3f}</div>
+                <div class="data-value {'lowest' if is_lowest_gplc else 'highest' if is_highest_gplc else ''}">{gplc_value:.3f}</div>
             </div>
             """,
             unsafe_allow_html=True,

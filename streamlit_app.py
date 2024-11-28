@@ -222,8 +222,11 @@ st.session_state.df_stations_others = df_stations_others
 
 kpis_page = st.Page("pages/kpi.py", title="KPIs", icon=":material/heap_snapshot_large:")
 map_page = st.Page("pages/map.py", title="Map", icon=":material/pin_drop:")
+ai_model_page = st.Page(
+    "pages/ai_model.py", title="AI Model", icon=":material/cognition_2:"
+)
 
-pg = st.navigation([kpis_page, map_page])
+pg = st.navigation([kpis_page, map_page, ai_model_page])
 
 with st.sidebar:
     st.title("Fuel price explorator")
