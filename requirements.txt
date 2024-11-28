@@ -1,5 +1,6 @@
 folium==0.18.0
 pandas==2.2.3
 plotly==5.22.0
+scikit_learn==1.4.1.post1
 streamlit==1.40.1
 streamlit_folium==0.23.2
